@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# datasets and trained weights are large -- keep them out of git
+data/
+artifacts/*.pt
+artifacts/*.log
