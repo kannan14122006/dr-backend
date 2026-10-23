@@ -19,7 +19,7 @@ The approach follows *Atwany et al., "Deep Learning Techniques for Diabetic Reti
 - **Metrics**: accuracy, quadratic weighted kappa, macro F1, one-vs-rest AUC, a confusion matrix, and referable-DR sensitivity, specificity and AUC.
 - **Explainability**: Grad-CAM heatmaps show which retina regions drove each prediction.
 
-The web frontend lives in a separate repository: https://github.com/kannan14122006/dr-frontend
+The web frontend lives in a separate repository: https://github.com/kannan14122006/diabeticretinopathy (live: https://kannan14122006.github.io/diabeticretinopathy/)
 
 ## Project layout
 
