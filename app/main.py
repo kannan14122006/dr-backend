@@ -10,7 +10,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, Response
 from PIL import Image, UnidentifiedImageError
@@ -25,6 +25,7 @@ from .config import (
     MODEL_PATH,
     REFERABLE_FROM_GRADE,
 )
+from .fundus_check import REASONS, fundus_problems
 from .model import Predictor
 
 log = logging.getLogger("dr-backend")
@@ -170,10 +171,14 @@ def dataset_stats():
     responses={
         400: {"description": "File is not a readable image"},
         413: {"description": "Image too large"},
+        422: {"description": "Image doesn't look like a retinal fundus photo (retry with force=true to grade anyway)"},
         503: {"description": "No trained model available"},
     },
 )
-async def predict(file: UploadFile = File(..., description="Retinal fundus photograph (PNG/JPEG/TIFF)")):
+async def predict(
+    file: UploadFile = File(..., description="Retinal fundus photograph (PNG/JPEG/TIFF)"),
+    force: bool = Query(False, description="Grade even if the image doesn't look like a fundus photo"),
+):
     predictor: Predictor | None = state["predictor"]
     if predictor is None:
         raise HTTPException(status_code=503, detail=state["load_error"] or "Model not loaded")
@@ -186,6 +191,14 @@ async def predict(file: UploadFile = File(..., description="Retinal fundus photo
         img.load()
     except (UnidentifiedImageError, OSError):
         raise HTTPException(status_code=400, detail="Uploaded file is not a readable image")
+
+    problems = [] if force else fundus_problems(img)
+    if problems:
+        raise HTTPException(status_code=422, detail={
+            "code": "not_fundus",
+            "message": "This doesn't look like a retinal fundus photograph.",
+            "reasons": [REASONS[p] for p in problems],
+        })
 
     started = time.perf_counter()
     result = predictor.predict(img)

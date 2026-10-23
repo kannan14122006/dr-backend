@@ -18,6 +18,7 @@ The approach follows *Atwany et al., "Deep Learning Techniques for Diabetic Reti
 - **Class imbalance**: inverse-frequency class weights. No DR makes up about 49% of APTOS.
 - **Metrics**: accuracy, quadratic weighted kappa, macro F1, one-vs-rest AUC, a confusion matrix, and referable-DR sensitivity, specificity and AUC.
 - **Explainability**: Grad-CAM heatmaps show which retina regions drove each prediction.
+- **Input validation**: `app/fundus_check.py` rejects non-fundus images (screenshots, documents, ordinary photos) with HTTP 422 and reasons. Add `?force=true` to grade anyway.
 
 The web frontend lives in a separate repository: https://github.com/kannan14122006/diabeticretinopathy (live: https://kannan14122006.github.io/diabeticretinopathy/)
 
