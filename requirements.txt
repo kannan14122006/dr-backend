@@ -9,3 +9,7 @@ pillow>=10.2
 opencv-python-headless>=4.9
 scikit-learn>=1.4
 tqdm>=4.66
+
+# only needed for deploy/export_onnx.py
+onnx>=1.16
+onnxruntime>=1.18

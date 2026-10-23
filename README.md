@@ -129,6 +129,18 @@ Or double-click `run.bat`.
 | GET | `/api/model/metrics` | Training and validation metrics JSON |
 | POST | `/api/model/reload` | Reloads `artifacts/model.pt` after retraining |
 
+## 6. Publish the model to the website (in-browser inference)
+
+The live site (https://kannan14122006.github.io/diabeticretinopathy/) runs the model in the browser, so no server is needed. Export the trained checkpoint to ONNX and copy the metrics and dataset stats into the frontend repo:
+
+```bash
+python -m deploy.export_onnx --out ../dr-frontend/models --data-dir ../dr-frontend/data \
+    --verify-csv C:\Users\admin\Downloads\archive\trainLabels.csv \
+    --verify-images C:\Users\admin\Downloads\archive\resized_train\resized_train
+```
+
+The ONNX graph includes the preprocessing and class activation maps. The `--verify-*` flags check the browser pipeline against PyTorch. The last export gave the same grade on 50/50 images, with a maximum probability difference of 0.016. Then commit and push `dr-frontend`.
+
 Environment variables: `ALLOWED_ORIGINS` (CORS, default `*`), `DR_MODEL_PATH`, `DR_ARTIFACTS_DIR`, `MAX_UPLOAD_MB`.
 
 > **Disclaimer:** This is an academic mini project. It is not a medical device and must not be used for clinical diagnosis.
